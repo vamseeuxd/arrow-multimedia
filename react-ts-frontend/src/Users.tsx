@@ -2,20 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { Container, Paper, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, DialogActions, TextField, IconButton, Alert } from '@mui/material';
 import { Edit, Delete, Add } from '@mui/icons-material';
 import { useAuth } from './AuthContext';
+import RoleGuard from './RoleGuard';
 
 interface User {
   _id: string;
   name: string;
   email: string;
+  role: string;
 }
 
 const Users: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [open, setOpen] = useState(false);
   const [editUser, setEditUser] = useState<User | null>(null);
-  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'user' });
   const [error, setError] = useState('');
-  const { token } = useAuth();
+  const { token, user } = useAuth();
 
   const fetchUsers = async () => {
     try {
@@ -50,7 +52,7 @@ const Users: React.FC = () => {
       if (response.ok) {
         fetchUsers();
         setOpen(false);
-        setFormData({ name: '', email: '', password: '' });
+        setFormData({ name: '', email: '', password: '', role: 'user' });
         setEditUser(null);
       } else {
         const data = await response.json();
@@ -78,10 +80,10 @@ const Users: React.FC = () => {
   const openDialog = (user?: User) => {
     if (user) {
       setEditUser(user);
-      setFormData({ name: user.name, email: user.email, password: '' });
+      setFormData({ name: user.name, email: user.email, password: '', role: user.role });
     } else {
       setEditUser(null);
-      setFormData({ name: '', email: '', password: '' });
+      setFormData({ name: '', email: '', password: '', role: 'user' });
     }
     setOpen(true);
   };
@@ -91,9 +93,11 @@ const Users: React.FC = () => {
       <Paper sx={{ p: 3 }}>
         <Typography variant="h4" gutterBottom>
           Users Management
-          <Button startIcon={<Add />} variant="contained" sx={{ ml: 2 }} onClick={() => openDialog()}>
-            Add User
-          </Button>
+          <RoleGuard allowedRoles={['admin']}>
+            <Button startIcon={<Add />} variant="contained" sx={{ ml: 2 }} onClick={() => openDialog()}>
+              Add User
+            </Button>
+          </RoleGuard>
         </Typography>
 
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
@@ -104,6 +108,7 @@ const Users: React.FC = () => {
               <TableRow>
                 <TableCell>Name</TableCell>
                 <TableCell>Email</TableCell>
+                <TableCell>Role</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -113,12 +118,25 @@ const Users: React.FC = () => {
                   <TableCell>{user.name}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>
-                    <IconButton onClick={() => openDialog(user)}>
-                      <Edit />
-                    </IconButton>
-                    <IconButton onClick={() => handleDelete(user._id)}>
-                      <Delete />
-                    </IconButton>
+                    <span style={{ 
+                      padding: '4px 8px', 
+                      borderRadius: '4px', 
+                      backgroundColor: user.role === 'admin' ? '#f44336' : user.role === 'manager' ? '#ff9800' : '#4caf50',
+                      color: 'white',
+                      fontSize: '12px'
+                    }}>
+                      {user.role.toUpperCase()}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <RoleGuard allowedRoles={['admin']}>
+                      <IconButton onClick={() => openDialog(user)}>
+                        <Edit />
+                      </IconButton>
+                      <IconButton onClick={() => handleDelete(user._id)}>
+                        <Delete />
+                      </IconButton>
+                    </RoleGuard>
                   </TableCell>
                 </TableRow>
               ))}
@@ -151,6 +169,19 @@ const Users: React.FC = () => {
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               margin="normal"
             />
+            <TextField
+              fullWidth
+              select
+              label="Role"
+              value={formData.role}
+              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+              margin="normal"
+              SelectProps={{ native: true }}
+            >
+              <option value="user">User</option>
+              <option value="manager">Manager</option>
+              <option value="admin">Admin</option>
+            </TextField>
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setOpen(false)}>Cancel</Button>

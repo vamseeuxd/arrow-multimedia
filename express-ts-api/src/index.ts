@@ -2,9 +2,11 @@ import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import { connectDB } from "./config/database";
 import { seedUsers } from "./user/UserModel";
+import { seedRoles } from "./roles/RoleModel";
 import authRoutes from "./auth/authRoutes";
 import userRoutes from "./user/userRoutes";
 import dashboardRoutes from "./dashboard/dashboardRoutes";
+import roleRoutes from "./roles/roleRoutes";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -19,6 +21,7 @@ app.use(express.json());
 // Initialize database connection
 connectDB();
 seedUsers();
+seedRoles();
 
 // Error handler
 const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
@@ -34,6 +37,7 @@ app.get("/api", (req: Request, res: Response) => {
 app.use('/api', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/roles', roleRoutes);
 
 app.use(errorHandler);
 

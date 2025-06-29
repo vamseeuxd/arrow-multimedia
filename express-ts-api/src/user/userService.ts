@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import User from './UserModel';
+import Role from '../roles/RoleModel';
 
 export const getAllUsers = async () => {
   return await User.find({}, { password: 0 });
@@ -11,17 +12,23 @@ export const getUserById = async (id: string) => {
   return user;
 };
 
-export const createUser = async (name: string, email: string, password: string) => {
+export const createUser = async (name: string, email: string, password: string, role: string = 'user') => {
   const existingUser = await User.findOne({ email });
   if (existingUser) throw new Error('Email already exists');
   
+  const roleExists = await Role.findOne({ name: role });
+  if (!roleExists) throw new Error('Invalid role');
+  
   const hashedPassword = bcrypt.hashSync(password, 10);
-  const user = await User.create({ name, email, password: hashedPassword });
-  return { id: user._id, name: user.name, email: user.email };
+  const user = await User.create({ name, email, password: hashedPassword, role });
+  return { id: user._id, name: user.name, email: user.email, role: user.role };
 };
 
-export const updateUser = async (id: string, name: string, email: string, password?: string) => {
-  const updateData: any = { name, email };
+export const updateUser = async (id: string, name: string, email: string, role: string, password?: string) => {
+  const roleExists = await Role.findOne({ name: role });
+  if (!roleExists) throw new Error('Invalid role');
+  
+  const updateData: any = { name, email, role };
   if (password) {
     updateData.password = bcrypt.hashSync(password, 10);
   }

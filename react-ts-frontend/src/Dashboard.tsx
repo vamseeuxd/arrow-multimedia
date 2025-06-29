@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Container, Typography, Button, Paper, Box, Alert, CircularProgress } from '@mui/material';
 import { useAuth } from './AuthContext';
 import { useNavigate } from 'react-router-dom';
+import RoleGuard from './RoleGuard';
 
 interface DashboardData {
   message: string;
@@ -92,9 +93,19 @@ const Dashboard: React.FC = () => {
         <Typography variant="h6" gutterBottom>
           Quick Actions
         </Typography>
-        <Button variant="contained" onClick={() => navigate('/users')}>
-          Manage Users
-        </Button>
+        <RoleGuard allowedRoles={['admin', 'manager']}>
+          <Button variant="contained" onClick={() => navigate('/users')} sx={{ mr: 2 }}>
+            Manage Users
+          </Button>
+        </RoleGuard>
+        <RoleGuard allowedRoles={['admin']}>
+          <Button variant="outlined" onClick={() => navigate('/roles')}>
+            Manage Roles
+          </Button>
+        </RoleGuard>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+          Your Role: <strong>{user?.role?.toUpperCase()}</strong>
+        </Typography>
       </Paper>
     </Container>
   );

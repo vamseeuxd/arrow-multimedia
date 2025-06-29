@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from './AuthContext';
 import Login from './Login';
 import Dashboard from './Dashboard';
 import Users from './Users';
+import Roles from './Roles';
 import theme from './theme';
 import './App.css';
 
@@ -30,6 +31,11 @@ const App: React.FC = () => {
             <Route path="/users" element={
               <ProtectedRoute>
                 <Users />
+              </ProtectedRoute>
+            } />
+            <Route path="/roles" element={
+              <ProtectedRoute>
+                <Roles />
               </ProtectedRoute>
             } />
             <Route path="/" element={<Navigate to="/dashboard" />} />

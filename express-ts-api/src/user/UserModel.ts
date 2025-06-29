@@ -5,6 +5,7 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
+  role: 'admin' | 'user' | 'manager';
 }
 
 const UserSchema: Schema = new Schema({
@@ -23,6 +24,11 @@ const UserSchema: Schema = new Schema({
   password: {
     type: String,
     required: true
+  },
+  role: {
+    type: String,
+    enum: ['admin', 'user', 'manager'],
+    default: 'user'
   }
 }, {
   timestamps: true
@@ -33,8 +39,8 @@ export const seedUsers = async () => {
     const userCount = await User.countDocuments();
     if (userCount === 0) {
       await User.create([
-        { name: "Vamsee Kalyan", email: "vamsee@example.com", password: bcrypt.hashSync("password123", 10) },
-        { name: "Krishna Sukanya", email: "krishna@example.com", password: bcrypt.hashSync("password123", 10) }
+        { name: "Vamsee Kalyan", email: "vamsee@example.com", password: bcrypt.hashSync("password123", 10), role: "admin" },
+        { name: "Krishna Sukanya", email: "krishna@example.com", password: bcrypt.hashSync("password123", 10), role: "user" }
       ]);
       console.log('Initial users seeded');
     }

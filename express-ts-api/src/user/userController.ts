@@ -22,8 +22,8 @@ export const getUser = async (req: AuthRequest, res: Response) => {
 
 export const addUser = async (req: AuthRequest, res: Response) => {
   try {
-    const { name, email, password } = req.body;
-    const user = await createUser(name, email, password);
+    const { name, email, password, role } = req.body;
+    const user = await createUser(name, email, password, role);
     res.status(201).json(user);
   } catch (error) {
     res.status(400).json({ error: (error as Error).message });
@@ -32,8 +32,8 @@ export const addUser = async (req: AuthRequest, res: Response) => {
 
 export const editUser = async (req: AuthRequest, res: Response) => {
   try {
-    const { name, email, password } = req.body;
-    const user = await updateUser(req.params.id, name, email, password);
+    const { name, email, password, role } = req.body;
+    const user = await updateUser(req.params.id, name, email, role, password);
     res.json(user);
   } catch (error) {
     res.status(404).json({ error: (error as Error).message });
