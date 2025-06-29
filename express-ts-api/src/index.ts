@@ -1,5 +1,6 @@
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
+import path from "path";
 import { connectDB } from "./config/database";
 import { seedUsers } from "./user/UserModel";
 import { seedRoles } from "./roles/RoleModel";
@@ -23,6 +24,9 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+
+// Serve static files from React build
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Initialize database connection
 connectDB();
@@ -55,6 +59,11 @@ app.use('/api/courses', courseRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/faculties', facultyRoutes);
 app.use('/api/batches', batchRoutes);
+
+// Serve React app for all non-API routes
+app.get('*', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../public/index.html'));
+});
 
 app.use(errorHandler);
 
