@@ -1,10 +1,10 @@
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import { connectDB } from "./config/database";
-import { seedUsers } from "./utils/seedData";
-import authRoutes from "./routes/authRoutes";
-import userRoutes from "./routes/userRoutes";
-import dashboardRoutes from "./routes/dashboardRoutes";
+import { seedUsers } from "./user/UserModel";
+import authRoutes from "./auth/authRoutes";
+import userRoutes from "./user/userRoutes";
+import dashboardRoutes from "./dashboard/dashboardRoutes";
 
 const app = express();
 const PORT = process.env.PORT || 3001;

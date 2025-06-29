@@ -1,6 +1,6 @@
 import { Response } from 'express';
-import { AuthRequest } from '../middleware/auth';
-import { getDashboardData } from '../services/dashboardService';
+import { AuthRequest } from '../middleware/authMiddleware';
+import { getDashboardData } from './dashboardService';
 
 export const dashboard = async (req: AuthRequest, res: Response) => {
   try {

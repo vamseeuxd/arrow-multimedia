@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import User from '../models/User';
+import User from './UserModel';
 
 export const getAllUsers = async () => {
   return await User.find({}, { password: 0 });
