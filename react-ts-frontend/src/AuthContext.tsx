@@ -23,28 +23,15 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
-  const [isLoading, setIsLoading] = useState(true);
+  const [token, setToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (token) {
-      // Verify token is still valid by making a request
-      fetch('http://localhost:3001/api/dashboard', {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      .then(res => {
-        if (!res.ok) {
-          localStorage.removeItem('token');
-          setToken(null);
-        }
-      })
-      .catch(() => {
-        localStorage.removeItem('token');
-        setToken(null);
-      });
-    }
-    setIsLoading(false);
-  }, [token]);
+    // Clear any existing token on page refresh
+    localStorage.removeItem('token');
+    setToken(null);
+    setUser(null);
+  }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
@@ -58,7 +45,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const data = await response.json();
         setToken(data.token);
         setUser(data.user);
-        localStorage.setItem('token', data.token);
         return true;
       }
       return false;
@@ -70,7 +56,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     setUser(null);
     setToken(null);
-    localStorage.removeItem('token');
   };
 
   return (

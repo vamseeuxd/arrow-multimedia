@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Paper, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, DialogActions, TextField, IconButton, Alert } from '@mui/material';
-import { Edit, Delete, Add } from '@mui/icons-material';
+import { Container, Paper, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, DialogActions, TextField, IconButton, Alert, Box } from '@mui/material';
+import { Edit, Delete, Add, ArrowBack } from '@mui/icons-material';
 import { useAuth } from './AuthContext';
+import { useNavigate } from 'react-router-dom';
 import RoleGuard from './RoleGuard';
 
 interface User {
@@ -29,6 +30,7 @@ const Users: React.FC = () => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '', roleId: '' });
   const [error, setError] = useState('');
   const { token, user } = useAuth();
+  const navigate = useNavigate();
 
   const fetchUsers = async () => {
     try {
@@ -115,14 +117,19 @@ const Users: React.FC = () => {
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
       <Paper sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
-          Users Management
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+          <Button startIcon={<ArrowBack />} onClick={() => navigate('/dashboard')} sx={{ mr: 2 }}>
+            Back
+          </Button>
+          <Typography variant="h4" sx={{ flexGrow: 1 }}>
+            Users Management
+          </Typography>
           <RoleGuard allowedRoles={['superAdmin', 'admin']}>
-            <Button startIcon={<Add />} variant="contained" sx={{ ml: 2 }} onClick={() => openDialog()}>
+            <Button startIcon={<Add />} variant="contained" onClick={() => openDialog()}>
               Add User
             </Button>
           </RoleGuard>
-        </Typography>
+        </Box>
 
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Paper, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, DialogActions, TextField, IconButton, Alert, Chip } from '@mui/material';
-import { Edit, Delete, Add } from '@mui/icons-material';
+import { Container, Paper, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, DialogActions, TextField, IconButton, Alert, Chip, Box } from '@mui/material';
+import { Edit, Delete, Add, ArrowBack } from '@mui/icons-material';
 import { useAuth } from './AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 interface Permission {
   _id: string;
@@ -17,6 +18,7 @@ const Permissions: React.FC = () => {
   const [formData, setFormData] = useState({ name: '', description: '', category: '' });
   const [error, setError] = useState('');
   const { token } = useAuth();
+  const navigate = useNavigate();
 
   const fetchPermissions = async () => {
     try {
@@ -98,12 +100,17 @@ const Permissions: React.FC = () => {
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
       <Paper sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
-          Permissions Management
-          <Button startIcon={<Add />} variant="contained" sx={{ ml: 2 }} onClick={() => openDialog()}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+          <Button startIcon={<ArrowBack />} onClick={() => navigate('/dashboard')} sx={{ mr: 2 }}>
+            Back
+          </Button>
+          <Typography variant="h4" sx={{ flexGrow: 1 }}>
+            Permissions Management
+          </Typography>
+          <Button startIcon={<Add />} variant="contained" onClick={() => openDialog()}>
             Add Permission
           </Button>
-        </Typography>
+        </Box>
 
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 

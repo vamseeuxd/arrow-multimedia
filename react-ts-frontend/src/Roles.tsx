@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Paper, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, DialogActions, TextField, IconButton, Alert, Chip, Box } from '@mui/material';
-import { Edit, Delete, Add } from '@mui/icons-material';
+import { Edit, Delete, Add, ArrowBack } from '@mui/icons-material';
 import { useAuth } from './AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 interface Role {
   _id: string;
@@ -25,6 +26,7 @@ const Roles: React.FC = () => {
   const [formData, setFormData] = useState({ name: '', description: '', permissionIds: [] as string[] });
   const [error, setError] = useState('');
   const { token } = useAuth();
+  const navigate = useNavigate();
 
   const fetchRoles = async () => {
     try {
@@ -120,12 +122,17 @@ const Roles: React.FC = () => {
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
       <Paper sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
-          Roles Management
-          <Button startIcon={<Add />} variant="contained" sx={{ ml: 2 }} onClick={() => openDialog()}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+          <Button startIcon={<ArrowBack />} onClick={() => navigate('/dashboard')} sx={{ mr: 2 }}>
+            Back
+          </Button>
+          <Typography variant="h4" sx={{ flexGrow: 1 }}>
+            Roles Management
+          </Typography>
+          <Button startIcon={<Add />} variant="contained" onClick={() => openDialog()}>
             Add Role
           </Button>
-        </Typography>
+        </Box>
 
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
