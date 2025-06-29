@@ -4,7 +4,8 @@ import {
   TableHead, TableRow, Paper, Dialog, DialogTitle, DialogContent,
   DialogActions, TextField, IconButton
 } from '@mui/material';
-import { Edit, Delete, Add } from '@mui/icons-material';
+import { Edit, Delete, Add, ArrowBack } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 interface Course {
@@ -27,6 +28,7 @@ const Courses: React.FC = () => {
     duration: 0,
     fees: 0
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCourses();
@@ -84,8 +86,11 @@ const Courses: React.FC = () => {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-        <Typography variant="h4">Courses</Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+        <Button startIcon={<ArrowBack />} onClick={() => navigate('/dashboard')} sx={{ mr: 2 }}>
+          Back
+        </Button>
+        <Typography variant="h4" sx={{ flexGrow: 1 }}>Courses</Typography>
         <Button variant="contained" startIcon={<Add />} onClick={() => setOpen(true)}>
           Add Course
         </Button>

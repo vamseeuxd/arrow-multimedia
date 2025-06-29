@@ -5,7 +5,8 @@ import {
   DialogActions, TextField, IconButton, Chip, FormControl, InputLabel,
   Select, MenuItem, OutlinedInput
 } from '@mui/material';
-import { Edit, Delete, Add } from '@mui/icons-material';
+import { Edit, Delete, Add, ArrowBack } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 interface Course {
@@ -36,6 +37,7 @@ const Faculties: React.FC = () => {
     phone: '',
     assignedCourses: [] as string[]
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchFaculties();
@@ -104,8 +106,11 @@ const Faculties: React.FC = () => {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-        <Typography variant="h4">Faculties</Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+        <Button startIcon={<ArrowBack />} onClick={() => navigate('/dashboard')} sx={{ mr: 2 }}>
+          Back
+        </Button>
+        <Typography variant="h4" sx={{ flexGrow: 1 }}>Faculties</Typography>
         <Button variant="contained" startIcon={<Add />} onClick={() => setOpen(true)}>
           Add Faculty
         </Button>
