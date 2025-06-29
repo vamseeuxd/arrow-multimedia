@@ -13,6 +13,8 @@ import Students from './Students';
 import Faculties from './Faculties';
 import Batches from './Batches';
 import Layout from './Layout';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
+import PWAUpdatePrompt from './components/PWAUpdatePrompt';
 import getTheme from './theme';
 import './App.css';
 
@@ -30,6 +32,8 @@ const ThemedApp: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <PWAInstallPrompt />
+      <PWAUpdatePrompt />
       <AuthProvider>
         <Router>
           <Routes>
