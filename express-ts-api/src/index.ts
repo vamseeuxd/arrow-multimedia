@@ -3,10 +3,12 @@ import cors from "cors";
 import { connectDB } from "./config/database";
 import { seedUsers } from "./user/UserModel";
 import { seedRoles } from "./roles/RoleModel";
+import { seedPermissions } from "./permissions/PermissionModel";
 import authRoutes from "./auth/authRoutes";
 import userRoutes from "./user/userRoutes";
 import dashboardRoutes from "./dashboard/dashboardRoutes";
 import roleRoutes from "./roles/roleRoutes";
+import permissionRoutes from "./permissions/permissionRoutes";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -22,6 +24,7 @@ app.use(express.json());
 connectDB();
 seedUsers();
 seedRoles();
+seedPermissions();
 
 // Error handler
 const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
@@ -38,6 +41,7 @@ app.use('/api', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/roles', roleRoutes);
+app.use('/api/permissions', permissionRoutes);
 
 app.use(errorHandler);
 

@@ -99,8 +99,11 @@ const Dashboard: React.FC = () => {
           </Button>
         </RoleGuard>
         <RoleGuard allowedRoles={['admin']}>
-          <Button variant="outlined" onClick={() => navigate('/roles')}>
+          <Button variant="outlined" onClick={() => navigate('/roles')} sx={{ mr: 2 }}>
             Manage Roles
+          </Button>
+          <Button variant="outlined" onClick={() => navigate('/permissions')}>
+            Manage Permissions
           </Button>
         </RoleGuard>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>

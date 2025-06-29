@@ -10,13 +10,16 @@ interface Role {
   permissions: string[];
 }
 
-const availablePermissions = [
-  'user.create', 'user.read', 'user.update', 'user.delete',
-  'role.manage', 'user.read.own'
-];
+interface Permission {
+  _id: string;
+  name: string;
+  description: string;
+  category: string;
+}
 
 const Roles: React.FC = () => {
   const [roles, setRoles] = useState<Role[]>([]);
+  const [permissions, setPermissions] = useState<Permission[]>([]);
   const [open, setOpen] = useState(false);
   const [editRole, setEditRole] = useState<Role | null>(null);
   const [formData, setFormData] = useState({ name: '', description: '', permissions: [] as string[] });
@@ -35,8 +38,21 @@ const Roles: React.FC = () => {
     }
   };
 
+  const fetchPermissions = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/api/permissions', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await response.json();
+      setPermissions(data);
+    } catch (error) {
+      setError('Failed to fetch permissions');
+    }
+  };
+
   useEffect(() => {
     fetchRoles();
+    fetchPermissions();
   }, []);
 
   const handleSubmit = async () => {
@@ -168,13 +184,13 @@ const Roles: React.FC = () => {
             />
             <Typography variant="subtitle1" sx={{ mt: 2, mb: 1 }}>Permissions:</Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-              {availablePermissions.map((permission) => (
+              {permissions.map((permission) => (
                 <Chip
-                  key={permission}
-                  label={permission}
+                  key={permission._id}
+                  label={`${permission.name} (${permission.category})`}
                   clickable
-                  color={formData.permissions.includes(permission) ? 'primary' : 'default'}
-                  onClick={() => togglePermission(permission)}
+                  color={formData.permissions.includes(permission.name) ? 'primary' : 'default'}
+                  onClick={() => togglePermission(permission.name)}
                 />
               ))}
             </Box>
