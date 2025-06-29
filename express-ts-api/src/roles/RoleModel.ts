@@ -33,11 +33,13 @@ export const seedRoles = async () => {
       const Permission = mongoose.model('Permission');
       const permissions = await Permission.find({});
       
+      const superAdminPerms = permissions.map(p => p._id); // All permissions
       const adminPerms = permissions.filter(p => ['user.create', 'user.read', 'user.update', 'user.delete', 'role.manage'].includes(p.name));
       const managerPerms = permissions.filter(p => ['user.read', 'user.update'].includes(p.name));
       const userPerms = permissions.filter(p => ['user.read.own'].includes(p.name));
       
       await Role.create([
+        { name: "superAdmin", description: "Super Administrator with full system control", permissions: superAdminPerms },
         { name: "admin", description: "Full system access", permissions: adminPerms.map(p => p._id) },
         { name: "manager", description: "Limited management access", permissions: managerPerms.map(p => p._id) },
         { name: "user", description: "Basic user access", permissions: userPerms.map(p => p._id) }

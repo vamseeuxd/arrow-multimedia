@@ -22,9 +22,14 @@ app.use(express.json());
 
 // Initialize database connection
 connectDB();
-seedUsers();
-seedRoles();
-seedPermissions();
+
+// Seed in correct order: Permissions -> Roles -> Users
+const initializeData = async () => {
+  await seedPermissions();
+  await seedRoles();
+  await seedUsers();
+};
+initializeData();
 
 // Error handler
 const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {

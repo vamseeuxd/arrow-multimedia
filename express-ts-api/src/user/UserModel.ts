@@ -39,11 +39,13 @@ export const seedUsers = async () => {
     const userCount = await User.countDocuments();
     if (userCount === 0) {
       const Role = mongoose.model('Role');
+      const superAdminRole = await Role.findOne({ name: 'superAdmin' });
       const adminRole = await Role.findOne({ name: 'admin' });
       const userRole = await Role.findOne({ name: 'user' });
       
-      if (adminRole && userRole) {
+      if (superAdminRole && adminRole && userRole) {
         await User.create([
+          { name: "Super Administrator", email: "superadmin@arrow.com", password: bcrypt.hashSync("SuperAdmin@2024", 10), role: superAdminRole._id },
           { name: "Vamsee Kalyan", email: "vamsee@example.com", password: bcrypt.hashSync("password123", 10), role: adminRole._id },
           { name: "Krishna Sukanya", email: "krishna@example.com", password: bcrypt.hashSync("password123", 10), role: userRole._id }
         ]);

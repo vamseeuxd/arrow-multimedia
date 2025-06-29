@@ -117,7 +117,7 @@ const Users: React.FC = () => {
       <Paper sx={{ p: 3 }}>
         <Typography variant="h4" gutterBottom>
           Users Management
-          <RoleGuard allowedRoles={['admin']}>
+          <RoleGuard allowedRoles={['superAdmin', 'admin']}>
             <Button startIcon={<Add />} variant="contained" sx={{ ml: 2 }} onClick={() => openDialog()}>
               Add User
             </Button>
@@ -153,7 +153,7 @@ const Users: React.FC = () => {
                     </span>
                   </TableCell>
                   <TableCell>
-                    <RoleGuard allowedRoles={['admin']}>
+                    <RoleGuard allowedRoles={['superAdmin', 'admin']}>
                       <IconButton onClick={() => openDialog(user)}>
                         <Edit />
                       </IconButton>

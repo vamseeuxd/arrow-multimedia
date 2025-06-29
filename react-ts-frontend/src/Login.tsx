@@ -34,7 +34,10 @@ const Login: React.FC = () => {
         
         <Box sx={{ mb: 2 }}>
           <Typography variant="body2" color="text.secondary">
-            Demo credentials: vamsee@example.com / password123
+            Super Admin: superadmin@arrow.com / SuperAdmin@2024
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Demo Admin: vamsee@example.com / password123
           </Typography>
         </Box>
 

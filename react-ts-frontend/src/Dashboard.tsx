@@ -93,15 +93,17 @@ const Dashboard: React.FC = () => {
         <Typography variant="h6" gutterBottom>
           Quick Actions
         </Typography>
-        <RoleGuard allowedRoles={['admin', 'manager']}>
+        <RoleGuard allowedRoles={['superAdmin', 'admin', 'manager']}>
           <Button variant="contained" onClick={() => navigate('/users')} sx={{ mr: 2 }}>
             Manage Users
           </Button>
         </RoleGuard>
-        <RoleGuard allowedRoles={['admin']}>
+        <RoleGuard allowedRoles={['superAdmin', 'admin']}>
           <Button variant="outlined" onClick={() => navigate('/roles')} sx={{ mr: 2 }}>
             Manage Roles
           </Button>
+        </RoleGuard>
+        <RoleGuard allowedRoles={['superAdmin']}>
           <Button variant="outlined" onClick={() => navigate('/permissions')}>
             Manage Permissions
           </Button>

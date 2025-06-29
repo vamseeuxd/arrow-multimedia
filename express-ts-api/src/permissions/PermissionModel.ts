@@ -40,7 +40,8 @@ export const seedPermissions = async () => {
         { name: "role.manage", description: "Manage roles and permissions", category: "Role Management" },
         { name: "dashboard.view", description: "Access dashboard", category: "Dashboard" },
         { name: "reports.view", description: "View reports", category: "Reports" },
-        { name: "settings.manage", description: "Manage system settings", category: "Settings" }
+        { name: "settings.manage", description: "Manage system settings", category: "Settings" },
+        { name: "system.admin", description: "Full system administration access", category: "System" }
       ]);
       console.log('Initial permissions seeded');
     }

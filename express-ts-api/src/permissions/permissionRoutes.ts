@@ -6,10 +6,10 @@ import { requireRole } from '../middleware/roleMiddleware';
 const router = Router();
 
 router.use(authenticateToken);
-router.get('/', requireRole(['admin']), getPermissions);
-router.get('/:id', requireRole(['admin']), getPermission);
-router.post('/', requireRole(['admin']), addPermission);
-router.put('/:id', requireRole(['admin']), editPermission);
-router.delete('/:id', requireRole(['admin']), removePermission);
+router.get('/', requireRole(['superAdmin', 'admin']), getPermissions);
+router.get('/:id', requireRole(['superAdmin', 'admin']), getPermission);
+router.post('/', requireRole(['superAdmin']), addPermission);
+router.put('/:id', requireRole(['superAdmin']), editPermission);
+router.delete('/:id', requireRole(['superAdmin']), removePermission);
 
 export default router;

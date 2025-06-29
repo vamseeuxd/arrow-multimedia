@@ -6,7 +6,8 @@
   "scripts": {
     "start": "ts-node-dev src/index.ts",
     "build": "tsc",
-    "serve": "node dist/index.js"
+    "serve": "node dist/index.js",
+    "reset-db": "ts-node src/utils/resetDatabase.ts"
   },
   "keywords": [],
   "author": "",
