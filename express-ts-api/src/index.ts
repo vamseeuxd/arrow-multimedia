@@ -2,16 +2,11 @@ import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  password: string;
-}
+import { connectDB } from "./config/database";
+import User, { IUser } from "./models/User";
 
 interface AuthRequest extends Request {
-  userId?: number;
+  userId?: string;
 }
 
 const app = express();
@@ -30,11 +25,25 @@ const errorHandler = (err: Error, req: Request, res: Response, next: NextFunctio
   res.status(500).json({ error: "Internal server error" });
 };
 
-// Mock data with hashed passwords
-const users: User[] = [
-  { id: 1, name: "Vamsee Kalyan", email: "vamsee@example.com", password: bcrypt.hashSync("password123", 10) },
-  { id: 2, name: "Krishna Sukanya", email: "krishna@example.com", password: bcrypt.hashSync("password123", 10) },
-];
+// Initialize database connection
+connectDB();
+
+// Seed initial users if needed
+const seedUsers = async () => {
+  try {
+    const userCount = await User.countDocuments();
+    if (userCount === 0) {
+      await User.create([
+        { name: "Vamsee Kalyan", email: "vamsee@example.com", password: bcrypt.hashSync("password123", 10) },
+        { name: "Krishna Sukanya", email: "krishna@example.com", password: bcrypt.hashSync("password123", 10) }
+      ]);
+      console.log('Initial users seeded');
+    }
+  } catch (error) {
+    console.error('Error seeding users:', error);
+  }
+};
+seedUsers();
 
 // Auth middleware
 const authenticateToken = (req: AuthRequest, res: Response, next: NextFunction) => {
@@ -62,28 +71,41 @@ app.get("/api", (req: Request, res: Response) => {
 });
 
 // Auth routes
-app.post("/api/login", (req: Request, res: Response) => {
-  const { email, password } = req.body;
-  
-  const user = users.find(u => u.email === email);
-  if (!user || !bcrypt.compareSync(password, user.password)) {
-    res.status(401).json({ error: "Invalid credentials" });
-    return;
-  }
+app.post("/api/login", async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+    
+    const user = await User.findOne({ email });
+    if (!user || !bcrypt.compareSync(password, user.password)) {
+      res.status(401).json({ error: "Invalid credentials" });
+      return;
+    }
 
-  const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '24h' });
-  res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
+    const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '24h' });
+    res.json({ token, user: { id: user._id, name: user.name, email: user.email } });
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
 // Protected routes
-app.get("/api/users", authenticateToken, (req: AuthRequest, res: Response) => {
-  const publicUsers = users.map(({ password, ...user }) => user);
-  res.json(publicUsers);
+app.get("/api/users", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const users = await User.find({}, { password: 0 });
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
-app.get("/api/dashboard", authenticateToken, (req: AuthRequest, res: Response) => {
-  const user = users.find(u => u.id === req.userId);
-  res.json({ message: `Welcome to dashboard, ${user?.name}!`, stats: { totalUsers: users.length } });
+app.get("/api/dashboard", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const user = await User.findById(req.userId);
+    const totalUsers = await User.countDocuments();
+    res.json({ message: `Welcome to dashboard, ${user?.name}!`, stats: { totalUsers } });
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
 app.use(errorHandler);
