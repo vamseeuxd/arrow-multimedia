@@ -22,7 +22,7 @@ const Permissions: React.FC = () => {
 
   const fetchPermissions = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/permissions', {
+      const response = await fetch(`${window.location.protocol}//${window.location.hostname}:3001/api/permissions`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await response.json();
@@ -38,7 +38,7 @@ const Permissions: React.FC = () => {
 
   const handleSubmit = async () => {
     try {
-      const url = editPermission ? `http://localhost:3001/api/permissions/${editPermission._id}` : 'http://localhost:3001/api/permissions';
+      const url = editPermission ? `${window.location.protocol}//${window.location.hostname}:3001/api/permissions/${editPermission._id}` : `${window.location.protocol}//${window.location.hostname}:3001/api/permissions`;
       const method = editPermission ? 'PUT' : 'POST';
       
       const response = await fetch(url, {
@@ -67,7 +67,7 @@ const Permissions: React.FC = () => {
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure?')) {
       try {
-        await fetch(`http://localhost:3001/api/permissions/${id}`, {
+        await fetch(`${window.location.protocol}//${window.location.hostname}:3001/api/permissions/${id}`, {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` }
         });

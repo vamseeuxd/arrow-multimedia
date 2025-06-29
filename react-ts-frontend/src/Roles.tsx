@@ -30,7 +30,7 @@ const Roles: React.FC = () => {
 
   const fetchRoles = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/roles', {
+      const response = await fetch(`${window.location.protocol}//${window.location.hostname}:3001/api/roles`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await response.json();
@@ -42,7 +42,7 @@ const Roles: React.FC = () => {
 
   const fetchPermissions = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/permissions', {
+      const response = await fetch(`${window.location.protocol}//${window.location.hostname}:3001/api/permissions`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await response.json();
@@ -59,7 +59,7 @@ const Roles: React.FC = () => {
 
   const handleSubmit = async () => {
     try {
-      const url = editRole ? `http://localhost:3001/api/roles/${editRole._id}` : 'http://localhost:3001/api/roles';
+      const url = editRole ? `${window.location.protocol}//${window.location.hostname}:3001/api/roles/${editRole._id}` : `${window.location.protocol}//${window.location.hostname}:3001/api/roles`;
       const method = editRole ? 'PUT' : 'POST';
       
       const response = await fetch(url, {
@@ -88,7 +88,7 @@ const Roles: React.FC = () => {
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure?')) {
       try {
-        await fetch(`http://localhost:3001/api/roles/${id}`, {
+        await fetch(`${window.location.protocol}//${window.location.hostname}:3001/api/roles/${id}`, {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` }
         });

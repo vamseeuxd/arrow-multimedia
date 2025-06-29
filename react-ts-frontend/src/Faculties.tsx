@@ -46,7 +46,7 @@ const Faculties: React.FC = () => {
 
   const fetchFaculties = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/faculties');
+      const response = await axios.get(`${window.location.protocol}//${window.location.hostname}:3001/api/faculties`);
       setFaculties(response.data);
     } catch (error) {
       console.error('Error fetching faculties:', error);
@@ -55,7 +55,7 @@ const Faculties: React.FC = () => {
 
   const fetchCourses = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/courses');
+      const response = await axios.get(`${window.location.protocol}//${window.location.hostname}:3001/api/courses`);
       setCourses(response.data);
     } catch (error) {
       console.error('Error fetching courses:', error);
@@ -65,9 +65,9 @@ const Faculties: React.FC = () => {
   const handleSubmit = async () => {
     try {
       if (editingFaculty) {
-        await axios.put(`http://localhost:3001/api/faculties/${editingFaculty._id}`, formData);
+        await axios.put(`${window.location.protocol}//${window.location.hostname}:3001/api/faculties/${editingFaculty._id}`, formData);
       } else {
-        await axios.post('http://localhost:3001/api/faculties', formData);
+        await axios.post(`${window.location.protocol}//${window.location.hostname}:3001/api/faculties`, formData);
       }
       fetchFaculties();
       handleClose();
@@ -78,7 +78,7 @@ const Faculties: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await axios.delete(`http://localhost:3001/api/faculties/${id}`);
+      await axios.delete(`${window.location.protocol}//${window.location.hostname}:3001/api/faculties/${id}`);
       fetchFaculties();
     } catch (error) {
       console.error('Error deleting faculty:', error);

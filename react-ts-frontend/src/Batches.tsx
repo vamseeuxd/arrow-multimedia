@@ -64,7 +64,7 @@ const Batches: React.FC = () => {
 
   const fetchBatches = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/batches');
+      const response = await axios.get(`${window.location.protocol}//${window.location.hostname}:3001/api/batches`);
       setBatches(response.data);
     } catch (error) {
       console.error('Error fetching batches:', error);
@@ -73,7 +73,7 @@ const Batches: React.FC = () => {
 
   const fetchCourses = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/courses');
+      const response = await axios.get(`${window.location.protocol}//${window.location.hostname}:3001/api/courses`);
       setCourses(response.data);
     } catch (error) {
       console.error('Error fetching courses:', error);
@@ -82,7 +82,7 @@ const Batches: React.FC = () => {
 
   const fetchFaculties = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/faculties');
+      const response = await axios.get(`${window.location.protocol}//${window.location.hostname}:3001/api/faculties`);
       setFaculties(response.data);
     } catch (error) {
       console.error('Error fetching faculties:', error);
@@ -91,7 +91,7 @@ const Batches: React.FC = () => {
 
   const fetchStudents = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/students');
+      const response = await axios.get(`${window.location.protocol}//${window.location.hostname}:3001/api/students`);
       setStudents(response.data);
     } catch (error) {
       console.error('Error fetching students:', error);
@@ -101,9 +101,9 @@ const Batches: React.FC = () => {
   const handleSubmit = async () => {
     try {
       if (editingBatch) {
-        await axios.put(`http://localhost:3001/api/batches/${editingBatch._id}`, formData);
+        await axios.put(`${window.location.protocol}//${window.location.hostname}:3001/api/batches/${editingBatch._id}`, formData);
       } else {
-        await axios.post('http://localhost:3001/api/batches', formData);
+        await axios.post(`${window.location.protocol}//${window.location.hostname}:3001/api/batches`, formData);
       }
       fetchBatches();
       handleClose();
@@ -114,7 +114,7 @@ const Batches: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await axios.delete(`http://localhost:3001/api/batches/${id}`);
+      await axios.delete(`${window.location.protocol}//${window.location.hostname}:3001/api/batches/${id}`);
       fetchBatches();
     } catch (error) {
       console.error('Error deleting batch:', error);

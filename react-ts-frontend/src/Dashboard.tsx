@@ -44,7 +44,7 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/dashboard', {
+        const response = await fetch(`${window.location.protocol}//${window.location.hostname}:3001/api/dashboard`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         

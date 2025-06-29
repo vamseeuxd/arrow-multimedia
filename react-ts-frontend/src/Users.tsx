@@ -70,7 +70,7 @@ const Users: React.FC = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/users', {
+      const response = await fetch(`${window.location.protocol}//${window.location.hostname}:3001/api/users`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await response.json();
@@ -82,7 +82,7 @@ const Users: React.FC = () => {
 
   const fetchRoles = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/users/roles', {
+      const response = await fetch(`${window.location.protocol}//${window.location.hostname}:3001/api/users/roles`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await response.json();
@@ -99,7 +99,7 @@ const Users: React.FC = () => {
 
   const handleSubmit = async () => {
     try {
-      const url = editUser ? `http://localhost:3001/api/users/${editUser._id}` : 'http://localhost:3001/api/users';
+      const url = editUser ? `${window.location.protocol}//${window.location.hostname}:3001/api/users/${editUser._id}` : `${window.location.protocol}//${window.location.hostname}:3001/api/users`;
       const method = editUser ? 'PUT' : 'POST';
       
       const response = await fetch(url, {
@@ -128,7 +128,7 @@ const Users: React.FC = () => {
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure?')) {
       try {
-        await fetch(`http://localhost:3001/api/users/${id}`, {
+        await fetch(`${window.location.protocol}//${window.location.hostname}:3001/api/users/${id}`, {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` }
         });

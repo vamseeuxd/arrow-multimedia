@@ -47,7 +47,7 @@ const Students: React.FC = () => {
 
   const fetchStudents = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/students');
+      const response = await axios.get(`${window.location.protocol}//${window.location.hostname}:3001/api/students`);
       setStudents(response.data);
     } catch (error) {
       console.error('Error fetching students:', error);
@@ -56,7 +56,7 @@ const Students: React.FC = () => {
 
   const fetchCourses = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/courses');
+      const response = await axios.get(`${window.location.protocol}//${window.location.hostname}:3001/api/courses`);
       setCourses(response.data);
     } catch (error) {
       console.error('Error fetching courses:', error);
@@ -66,9 +66,9 @@ const Students: React.FC = () => {
   const handleSubmit = async () => {
     try {
       if (editingStudent) {
-        await axios.put(`http://localhost:3001/api/students/${editingStudent._id}`, formData);
+        await axios.put(`${window.location.protocol}//${window.location.hostname}:3001/api/students/${editingStudent._id}`, formData);
       } else {
-        await axios.post('http://localhost:3001/api/students', formData);
+        await axios.post(`${window.location.protocol}//${window.location.hostname}:3001/api/students`, formData);
       }
       fetchStudents();
       handleClose();
@@ -79,7 +79,7 @@ const Students: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await axios.delete(`http://localhost:3001/api/students/${id}`);
+      await axios.delete(`${window.location.protocol}//${window.location.hostname}:3001/api/students/${id}`);
       fetchStudents();
     } catch (error) {
       console.error('Error deleting student:', error);
