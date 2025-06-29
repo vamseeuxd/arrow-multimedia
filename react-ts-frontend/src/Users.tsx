@@ -1,8 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Paper, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, DialogActions, TextField, IconButton, Alert, Box } from '@mui/material';
-import { Edit, Delete, Add, ArrowBack } from '@mui/icons-material';
+import {
+  Container,
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Alert,
+  Box,
+  Avatar,
+  Chip,
+  useTheme,
+  MenuItem,
+  Fab,
+  Grid,
+} from '@mui/material';
+import {
+  Edit,
+  Delete,
+  Add,
+  People as PeopleIcon,
+  Email,
+  Badge,
+} from '@mui/icons-material';
 import { useAuth } from './AuthContext';
-import { useNavigate } from 'react-router-dom';
 import RoleGuard from './RoleGuard';
 
 interface User {
@@ -29,8 +54,19 @@ const Users: React.FC = () => {
   const [editUser, setEditUser] = useState<User | null>(null);
   const [formData, setFormData] = useState({ name: '', email: '', password: '', roleId: '' });
   const [error, setError] = useState('');
-  const { token, user } = useAuth();
-  const navigate = useNavigate();
+  const { token } = useAuth();
+  const theme = useTheme();
+
+  const getRoleColor = (roleName: string) => {
+    switch (roleName.toLowerCase()) {
+      case 'superadmin': return theme.palette.error.main;
+      case 'admin': return theme.palette.warning.main;
+      case 'manager': return theme.palette.info.main;
+      case 'faculty': return theme.palette.success.main;
+      case 'student': return theme.palette.secondary.main;
+      default: return theme.palette.grey[500];
+    }
+  };
 
   const fetchUsers = async () => {
     try {
@@ -115,82 +151,173 @@ const Users: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4 }}>
-      <Paper sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-          <Button startIcon={<ArrowBack />} onClick={() => navigate('/dashboard')} sx={{ mr: 2 }}>
-            Back
-          </Button>
-          <Typography variant="h4" sx={{ flexGrow: 1 }}>
-            Users Management
-          </Typography>
-          <RoleGuard allowedRoles={['superAdmin', 'admin']}>
-            <Button startIcon={<Add />} variant="contained" onClick={() => openDialog()}>
-              Add User
-            </Button>
-          </RoleGuard>
-        </Box>
+    <Container maxWidth="xl">
+      {/* Header */}
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+          Users Management
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          Manage system users and their roles
+        </Typography>
+      </Box>
 
-        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Role</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {users.map((user) => (
-                <TableRow key={user._id}>
-                  <TableCell>{user.name}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>
-                    <span style={{ 
-                      padding: '4px 8px', 
-                      borderRadius: '4px', 
-                      backgroundColor: user.role.name === 'admin' ? '#f44336' : user.role.name === 'manager' ? '#ff9800' : '#4caf50',
-                      color: 'white',
-                      fontSize: '12px'
-                    }}>
-                      {user.role.name.toUpperCase()}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <RoleGuard allowedRoles={['superAdmin', 'admin']}>
-                      <IconButton onClick={() => openDialog(user)}>
-                        <Edit />
-                      </IconButton>
-                      <IconButton onClick={() => handleDelete(user._id)}>
-                        <Delete />
-                      </IconButton>
-                    </RoleGuard>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+      {/* Stats Cards */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <Card>
+            <CardContent sx={{ textAlign: 'center' }}>
+              <Avatar sx={{ bgcolor: theme.palette.primary.main, mx: 'auto', mb: 2 }}>
+                <PeopleIcon />
+              </Avatar>
+              <Typography variant="h4" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>
+                {users.length}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Total Users
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <Card>
+            <CardContent sx={{ textAlign: 'center' }}>
+              <Avatar sx={{ bgcolor: theme.palette.success.main, mx: 'auto', mb: 2 }}>
+                <Badge />
+              </Avatar>
+              <Typography variant="h4" sx={{ fontWeight: 700, color: theme.palette.success.main }}>
+                {roles.length}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Available Roles
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+
+      {/* Users Grid */}
+      <Grid container spacing={3}>
+        {users.map((user) => (
+          <Grid key={user._id} size={{ xs: 12, sm: 6, md: 4 }}>
+            <Card
+              sx={{
+                height: '100%',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: theme.shadows[8],
+                },
+              }}
+            >
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <Avatar
+                    sx={{
+                      bgcolor: getRoleColor(user.role.name),
+                      width: 48,
+                      height: 48,
+                      mr: 2,
+                    }}
+                  >
+                    {user.name.charAt(0).toUpperCase()}
+                  </Avatar>
+                  <Box sx={{ flexGrow: 1 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                      {user.name}
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
+                      <Email sx={{ fontSize: 16, mr: 0.5, color: 'text.secondary' }} />
+                      <Typography variant="body2" color="text.secondary">
+                        {user.email}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Box>
+                
+                <Chip
+                  label={user.role.name.toUpperCase()}
+                  sx={{
+                    bgcolor: getRoleColor(user.role.name),
+                    color: 'white',
+                    fontWeight: 600,
+                    mb: 2,
+                  }}
+                />
+                
+                <RoleGuard allowedRoles={['superAdmin', 'admin']}>
+                  <Box sx={{ display: 'flex', gap: 1 }}>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      startIcon={<Edit />}
+                      onClick={() => openDialog(user)}
+                      sx={{ flex: 1 }}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      color="error"
+                      startIcon={<Delete />}
+                      onClick={() => handleDelete(user._id)}
+                      sx={{ flex: 1 }}
+                    >
+                      Delete
+                    </Button>
+                  </Box>
+                </RoleGuard>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+
+      {/* Floating Action Button */}
+      <RoleGuard allowedRoles={['superAdmin', 'admin']}>
+        <Fab
+          color="primary"
+          sx={{
+            position: 'fixed',
+            bottom: 24,
+            right: 24,
+            background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+          }}
+          onClick={() => openDialog()}
+        >
+          <Add />
+        </Fab>
+      </RoleGuard>
 
         <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
-          <DialogTitle>{editUser ? 'Edit User' : 'Add User'}</DialogTitle>
-          <DialogContent>
+          <DialogTitle sx={{ pb: 2 }}>
+            <Typography variant="h5" sx={{ fontWeight: 600 }}>
+              {editUser ? 'Edit User' : 'Add New User'}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {editUser ? 'Update user information' : 'Create a new user account'}
+            </Typography>
+          </DialogTitle>
+          <DialogContent sx={{ pt: 2 }}>
             <TextField
               fullWidth
-              label="Name"
+              label="Full Name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               margin="normal"
+              variant="outlined"
             />
             <TextField
               fullWidth
-              label="Email"
+              label="Email Address"
+              type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               margin="normal"
+              variant="outlined"
             />
             <TextField
               fullWidth
@@ -199,32 +326,48 @@ const Users: React.FC = () => {
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               margin="normal"
+              variant="outlined"
             />
             <TextField
               fullWidth
               select
-              label="Role"
+              label="User Role"
               value={formData.roleId}
               onChange={(e) => setFormData({ ...formData, roleId: e.target.value })}
               margin="normal"
-              SelectProps={{ native: true }}
+              variant="outlined"
             >
-              <option value="">Select Role</option>
+              <MenuItem value="">Select a role</MenuItem>
               {roles.map((role) => (
-                <option key={role._id} value={role._id}>
-                  {role.name} - {role.description}
-                </option>
+                <MenuItem key={role._id} value={role._id}>
+                  <Box>
+                    <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                      {role.name.charAt(0).toUpperCase() + role.name.slice(1)}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {role.description}
+                    </Typography>
+                  </Box>
+                </MenuItem>
               ))}
             </TextField>
           </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setOpen(false)}>Cancel</Button>
-            <Button onClick={handleSubmit} variant="contained">
-              {editUser ? 'Update' : 'Create'}
+          <DialogActions sx={{ p: 3, pt: 2 }}>
+            <Button onClick={() => setOpen(false)} sx={{ mr: 1 }}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSubmit}
+              variant="contained"
+              sx={{
+                background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                px: 3,
+              }}
+            >
+              {editUser ? 'Update User' : 'Create User'}
             </Button>
           </DialogActions>
         </Dialog>
-      </Paper>
     </Container>
   );
 };

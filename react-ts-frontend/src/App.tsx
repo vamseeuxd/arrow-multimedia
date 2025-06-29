@@ -1,7 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider, CssBaseline } from '@mui/material';
 import { AuthProvider, useAuth } from './AuthContext';
+import { ThemeModeProvider, useThemeMode } from './ThemeContext';
 import Login from './Login';
 import Dashboard from './Dashboard';
 import Users from './Users';
@@ -11,19 +12,24 @@ import Courses from './Courses';
 import Students from './Students';
 import Faculties from './Faculties';
 import Batches from './Batches';
-import theme from './theme';
+import Layout from './Layout';
+import getTheme from './theme';
 import './App.css';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { token, isLoading } = useAuth();
   
   if (isLoading) return null;
-  return token ? <>{children}</> : <Navigate to="/login" />;
+  return token ? <Layout>{children}</Layout> : <Navigate to="/login" />;
 };
 
-const App: React.FC = () => {
+const ThemedApp: React.FC = () => {
+  const { isDarkMode } = useThemeMode();
+  const theme = getTheme(isDarkMode ? 'dark' : 'light');
+
   return (
     <ThemeProvider theme={theme}>
+      <CssBaseline />
       <AuthProvider>
         <Router>
           <Routes>
@@ -73,6 +79,14 @@ const App: React.FC = () => {
         </Router>
       </AuthProvider>
     </ThemeProvider>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <ThemeModeProvider>
+      <ThemedApp />
+    </ThemeModeProvider>
   );
 };
 
