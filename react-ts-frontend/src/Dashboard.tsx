@@ -107,7 +107,7 @@ const Dashboard: React.FC = () => {
           </Button>
         </RoleGuard>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-          Your Role: <strong>{user?.role?.toUpperCase()}</strong>
+          Your Role: <strong>{user?.role?.name?.toUpperCase()}</strong>
         </Typography>
       </Paper>
     </Container>

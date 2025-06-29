@@ -5,7 +5,7 @@ import User from '../user/UserModel';
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
 export const loginUser = async (email: string, password: string) => {
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).populate('role', 'name description');
   if (!user || !bcrypt.compareSync(password, user.password)) {
     throw new Error('Invalid credentials');
   }

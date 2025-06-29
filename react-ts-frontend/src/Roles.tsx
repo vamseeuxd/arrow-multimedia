@@ -7,7 +7,7 @@ interface Role {
   _id: string;
   name: string;
   description: string;
-  permissions: string[];
+  permissions: Permission[];
 }
 
 interface Permission {
@@ -22,7 +22,7 @@ const Roles: React.FC = () => {
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [open, setOpen] = useState(false);
   const [editRole, setEditRole] = useState<Role | null>(null);
-  const [formData, setFormData] = useState({ name: '', description: '', permissions: [] as string[] });
+  const [formData, setFormData] = useState({ name: '', description: '', permissionIds: [] as string[] });
   const [error, setError] = useState('');
   const { token } = useAuth();
 
@@ -72,7 +72,7 @@ const Roles: React.FC = () => {
       if (response.ok) {
         fetchRoles();
         setOpen(false);
-        setFormData({ name: '', description: '', permissions: [] });
+        setFormData({ name: '', description: '', permissionIds: [] });
         setEditRole(null);
       } else {
         const data = await response.json();
@@ -100,20 +100,20 @@ const Roles: React.FC = () => {
   const openDialog = (role?: Role) => {
     if (role) {
       setEditRole(role);
-      setFormData({ name: role.name, description: role.description, permissions: role.permissions });
+      setFormData({ name: role.name, description: role.description, permissionIds: role.permissions.map(p => p._id) });
     } else {
       setEditRole(null);
-      setFormData({ name: '', description: '', permissions: [] });
+      setFormData({ name: '', description: '', permissionIds: [] });
     }
     setOpen(true);
   };
 
-  const togglePermission = (permission: string) => {
+  const togglePermission = (permissionId: string) => {
     setFormData(prev => ({
       ...prev,
-      permissions: prev.permissions.includes(permission)
-        ? prev.permissions.filter(p => p !== permission)
-        : [...prev.permissions, permission]
+      permissionIds: prev.permissionIds.includes(permissionId)
+        ? prev.permissionIds.filter(p => p !== permissionId)
+        : [...prev.permissionIds, permissionId]
     }));
   };
 
@@ -147,7 +147,7 @@ const Roles: React.FC = () => {
                   <TableCell>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                       {role.permissions.map((permission) => (
-                        <Chip key={permission} label={permission} size="small" />
+                        <Chip key={permission._id} label={permission.name} size="small" />
                       ))}
                     </Box>
                   </TableCell>
@@ -189,8 +189,8 @@ const Roles: React.FC = () => {
                   key={permission._id}
                   label={`${permission.name} (${permission.category})`}
                   clickable
-                  color={formData.permissions.includes(permission.name) ? 'primary' : 'default'}
-                  onClick={() => togglePermission(permission.name)}
+                  color={formData.permissionIds.includes(permission._id) ? 'primary' : 'default'}
+                  onClick={() => togglePermission(permission._id)}
                 />
               ))}
             </Box>

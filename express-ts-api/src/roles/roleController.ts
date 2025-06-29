@@ -22,8 +22,8 @@ export const getRole = async (req: AuthRequest, res: Response) => {
 
 export const addRole = async (req: AuthRequest, res: Response) => {
   try {
-    const { name, description, permissions } = req.body;
-    const role = await createRole(name, description, permissions);
+    const { name, description, permissionIds } = req.body;
+    const role = await createRole(name, description, permissionIds);
     res.status(201).json(role);
   } catch (error) {
     res.status(400).json({ error: (error as Error).message });
@@ -32,8 +32,8 @@ export const addRole = async (req: AuthRequest, res: Response) => {
 
 export const editRole = async (req: AuthRequest, res: Response) => {
   try {
-    const { name, description, permissions } = req.body;
-    const role = await updateRole(req.params.id, name, description, permissions);
+    const { name, description, permissionIds } = req.body;
+    const role = await updateRole(req.params.id, name, description, permissionIds);
     res.json(role);
   } catch (error) {
     res.status(404).json({ error: (error as Error).message });

@@ -5,7 +5,7 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
-  role: 'admin' | 'user' | 'manager';
+  role: mongoose.Types.ObjectId;
 }
 
 const UserSchema: Schema = new Schema({
@@ -26,9 +26,9 @@ const UserSchema: Schema = new Schema({
     required: true
   },
   role: {
-    type: String,
-    enum: ['admin', 'user', 'manager'],
-    default: 'user'
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Role',
+    required: true
   }
 }, {
   timestamps: true
@@ -38,11 +38,17 @@ export const seedUsers = async () => {
   try {
     const userCount = await User.countDocuments();
     if (userCount === 0) {
-      await User.create([
-        { name: "Vamsee Kalyan", email: "vamsee@example.com", password: bcrypt.hashSync("password123", 10), role: "admin" },
-        { name: "Krishna Sukanya", email: "krishna@example.com", password: bcrypt.hashSync("password123", 10), role: "user" }
-      ]);
-      console.log('Initial users seeded');
+      const Role = mongoose.model('Role');
+      const adminRole = await Role.findOne({ name: 'admin' });
+      const userRole = await Role.findOne({ name: 'user' });
+      
+      if (adminRole && userRole) {
+        await User.create([
+          { name: "Vamsee Kalyan", email: "vamsee@example.com", password: bcrypt.hashSync("password123", 10), role: adminRole._id },
+          { name: "Krishna Sukanya", email: "krishna@example.com", password: bcrypt.hashSync("password123", 10), role: userRole._id }
+        ]);
+        console.log('Initial users seeded');
+      }
     }
   } catch (error) {
     console.error('Error seeding users:', error);

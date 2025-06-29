@@ -11,7 +11,7 @@ interface RoleGuardProps {
 const RoleGuard: React.FC<RoleGuardProps> = ({ allowedRoles, children, fallback }) => {
   const { user } = useAuth();
 
-  if (!user || !allowedRoles.includes(user.role)) {
+  if (!user || !user.role || !allowedRoles.includes(user.role.name)) {
     return <>{fallback || <Alert severity="error">Access denied. Insufficient permissions.</Alert>}</>;
   }
 
