@@ -89,10 +89,71 @@ app.post("/api/login", async (req: Request, res: Response) => {
 });
 
 // Protected routes
+// User CRUD routes
 app.get("/api/users", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const users = await User.find({}, { password: 0 });
     res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+app.get("/api/users/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const user = await User.findById(req.params.id, { password: 0 });
+    if (!user) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+app.post("/api/users", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const { name, email, password } = req.body;
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      res.status(400).json({ error: "Email already exists" });
+      return;
+    }
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    const user = await User.create({ name, email, password: hashedPassword });
+    res.status(201).json({ id: user._id, name: user.name, email: user.email });
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+app.put("/api/users/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const { name, email, password } = req.body;
+    const updateData: any = { name, email };
+    if (password) {
+      updateData.password = bcrypt.hashSync(password, 10);
+    }
+    const user = await User.findByIdAndUpdate(req.params.id, updateData, { new: true, select: '-password' });
+    if (!user) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+app.delete("/api/users/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+    res.json({ message: "User deleted successfully" });
   } catch (error) {
     res.status(500).json({ error: "Server error" });
   }

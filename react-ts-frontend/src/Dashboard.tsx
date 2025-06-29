@@ -79,13 +79,22 @@ const Dashboard: React.FC = () => {
         </Typography>
       </Paper>
 
-      <Paper elevation={2} sx={{ p: 3 }}>
+      <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
         <Typography variant="h6" gutterBottom>
           Statistics
         </Typography>
         <Typography variant="body1">
           Total Users: {data?.stats.totalUsers}
         </Typography>
+      </Paper>
+
+      <Paper elevation={2} sx={{ p: 3 }}>
+        <Typography variant="h6" gutterBottom>
+          Quick Actions
+        </Typography>
+        <Button variant="contained" onClick={() => navigate('/users')}>
+          Manage Users
+        </Button>
       </Paper>
     </Container>
   );

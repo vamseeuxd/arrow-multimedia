@@ -1,0 +1,167 @@
+import React, { useState, useEffect } from 'react';
+import { Container, Paper, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, DialogActions, TextField, IconButton, Alert } from '@mui/material';
+import { Edit, Delete, Add } from '@mui/icons-material';
+import { useAuth } from './AuthContext';
+
+interface User {
+  _id: string;
+  name: string;
+  email: string;
+}
+
+const Users: React.FC = () => {
+  const [users, setUsers] = useState<User[]>([]);
+  const [open, setOpen] = useState(false);
+  const [editUser, setEditUser] = useState<User | null>(null);
+  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [error, setError] = useState('');
+  const { token } = useAuth();
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/api/users', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await response.json();
+      setUsers(data);
+    } catch (error) {
+      setError('Failed to fetch users');
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const handleSubmit = async () => {
+    try {
+      const url = editUser ? `http://localhost:3001/api/users/${editUser._id}` : 'http://localhost:3001/api/users';
+      const method = editUser ? 'PUT' : 'POST';
+      
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        fetchUsers();
+        setOpen(false);
+        setFormData({ name: '', email: '', password: '' });
+        setEditUser(null);
+      } else {
+        const data = await response.json();
+        setError(data.error);
+      }
+    } catch (error) {
+      setError('Operation failed');
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (window.confirm('Are you sure?')) {
+      try {
+        await fetch(`http://localhost:3001/api/users/${id}`, {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        fetchUsers();
+      } catch (error) {
+        setError('Delete failed');
+      }
+    }
+  };
+
+  const openDialog = (user?: User) => {
+    if (user) {
+      setEditUser(user);
+      setFormData({ name: user.name, email: user.email, password: '' });
+    } else {
+      setEditUser(null);
+      setFormData({ name: '', email: '', password: '' });
+    }
+    setOpen(true);
+  };
+
+  return (
+    <Container maxWidth="lg" sx={{ mt: 4 }}>
+      <Paper sx={{ p: 3 }}>
+        <Typography variant="h4" gutterBottom>
+          Users Management
+          <Button startIcon={<Add />} variant="contained" sx={{ ml: 2 }} onClick={() => openDialog()}>
+            Add User
+          </Button>
+        </Typography>
+
+        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {users.map((user) => (
+                <TableRow key={user._id}>
+                  <TableCell>{user.name}</TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>
+                    <IconButton onClick={() => openDialog(user)}>
+                      <Edit />
+                    </IconButton>
+                    <IconButton onClick={() => handleDelete(user._id)}>
+                      <Delete />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
+          <DialogTitle>{editUser ? 'Edit User' : 'Add User'}</DialogTitle>
+          <DialogContent>
+            <TextField
+              fullWidth
+              label="Name"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label={editUser ? 'New Password (optional)' : 'Password'}
+              type="password"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              margin="normal"
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpen(false)}>Cancel</Button>
+            <Button onClick={handleSubmit} variant="contained">
+              {editUser ? 'Update' : 'Create'}
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Paper>
+    </Container>
+  );
+};
+
+export default Users;

@@ -4,6 +4,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import { AuthProvider, useAuth } from './AuthContext';
 import Login from './Login';
 import Dashboard from './Dashboard';
+import Users from './Users';
 import theme from './theme';
 import './App.css';
 
@@ -24,6 +25,11 @@ const App: React.FC = () => {
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/users" element={
+              <ProtectedRoute>
+                <Users />
               </ProtectedRoute>
             } />
             <Route path="/" element={<Navigate to="/dashboard" />} />
