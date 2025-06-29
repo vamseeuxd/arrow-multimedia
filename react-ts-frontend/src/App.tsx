@@ -7,6 +7,10 @@ import Dashboard from './Dashboard';
 import Users from './Users';
 import Roles from './Roles';
 import Permissions from './Permissions';
+import Courses from './Courses';
+import Students from './Students';
+import Faculties from './Faculties';
+import Batches from './Batches';
 import theme from './theme';
 import './App.css';
 
@@ -42,6 +46,26 @@ const App: React.FC = () => {
             <Route path="/permissions" element={
               <ProtectedRoute>
                 <Permissions />
+              </ProtectedRoute>
+            } />
+            <Route path="/courses" element={
+              <ProtectedRoute>
+                <Courses />
+              </ProtectedRoute>
+            } />
+            <Route path="/students" element={
+              <ProtectedRoute>
+                <Students />
+              </ProtectedRoute>
+            } />
+            <Route path="/faculties" element={
+              <ProtectedRoute>
+                <Faculties />
+              </ProtectedRoute>
+            } />
+            <Route path="/batches" element={
+              <ProtectedRoute>
+                <Batches />
               </ProtectedRoute>
             } />
             <Route path="/" element={<Navigate to="/dashboard" />} />

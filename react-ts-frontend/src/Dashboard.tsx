@@ -104,10 +104,22 @@ const Dashboard: React.FC = () => {
           </Button>
         </RoleGuard>
         <RoleGuard allowedRoles={['superAdmin']}>
-          <Button variant="outlined" onClick={() => navigate('/permissions')}>
+          <Button variant="outlined" onClick={() => navigate('/permissions')} sx={{ mr: 2 }}>
             Manage Permissions
           </Button>
         </RoleGuard>
+        <Button variant="contained" onClick={() => navigate('/courses')} sx={{ mr: 2, mt: 2 }}>
+          Manage Courses
+        </Button>
+        <Button variant="contained" onClick={() => navigate('/students')} sx={{ mr: 2, mt: 2 }}>
+          Manage Students
+        </Button>
+        <Button variant="contained" onClick={() => navigate('/faculties')} sx={{ mr: 2, mt: 2 }}>
+          Manage Faculties
+        </Button>
+        <Button variant="contained" onClick={() => navigate('/batches')} sx={{ mt: 2 }}>
+          Manage Batches
+        </Button>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
           Your Role: <strong>{user?.role?.name?.toUpperCase()}</strong>
         </Typography>

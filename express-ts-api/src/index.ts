@@ -9,6 +9,10 @@ import userRoutes from "./user/userRoutes";
 import dashboardRoutes from "./dashboard/dashboardRoutes";
 import roleRoutes from "./roles/roleRoutes";
 import permissionRoutes from "./permissions/permissionRoutes";
+import courseRoutes from "./courses/courseRoutes";
+import studentRoutes from "./students/studentRoutes";
+import facultyRoutes from "./faculties/facultyRoutes";
+import batchRoutes from "./batches/batchRoutes";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -47,6 +51,10 @@ app.use('/api/users', userRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/roles', roleRoutes);
 app.use('/api/permissions', permissionRoutes);
+app.use('/api/courses', courseRoutes);
+app.use('/api/students', studentRoutes);
+app.use('/api/faculties', facultyRoutes);
+app.use('/api/batches', batchRoutes);
 
 app.use(errorHandler);
 
